@@ -38,7 +38,9 @@ async function getShowsByTerm(term) {
 }
 
 
-/** Given list of shows, create markup for each show and add to DOM */
+/** Given list of shows, create markup for each show
+ * and add to DOM by appending to the showsList
+*/
 function populateShows(shows) {
   $showsList.empty();
 

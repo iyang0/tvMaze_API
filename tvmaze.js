@@ -14,24 +14,42 @@ const $searchForm = $("#searchForm");
 
 async function getShowsByTerm(term) {
   let url = "http://api.tvmaze.com/search/shows"
+  // TODO: change base URL to a global constant
+  // and have the endpoint as the variable here
+  // concatenate together in function
   let showList = await axios.get(url, {params:{q:term}});
 
   // loop over shows to only give us the id, name, summary, image in an object
   // then put the object into an array which will be returned
 
-  let prunedShows = showList.data.map(show =>{
-    let prunedShow = {};
-    prunedShow.id = show.show.id;
-    prunedShow.name = show.show.name;
-    prunedShow.summary = show.show.summary;
+  // keeping old code as reference
+  // let prunedShows = showList.data.map(showAndScore =>{
+  //   let prunedShow = {};
+  //   prunedShow.id = showAndScore.show.id;
+  //   prunedShow.name = showAndScore.show.name;
+  //   prunedShow.summary = showAndScore.show.summary;
 
-    //if a show has no image, set as default image
+  //   //if a show has no image, set as default image
     
-    prunedShow.image = show.show.image
-      ? show.show.image.medium
-      : "https://tinyurl.com/tv-missing";
+  //   prunedShow.image = showAndScore.show.image
+  //     ? showAndScore.show.image.medium
+  //     : "https://tinyurl.com/tv-missing";
+  //     //global constant for default image that could be used in different functions
 
-    return prunedShow;
+  //   return prunedShow;
+  // });
+
+  let prunedShows = showList.data.map( ({show}) =>{
+    return {
+      id : show.id,
+      name : show.name,
+      summary : show.summary,
+      //if a show has no image, set as default image
+      image : show.image
+        ? show.image.medium
+        : "https://tinyurl.com/tv-missing"
+        //global constant for default image that could be used in different functions
+    }      
   });
 
   return prunedShows;

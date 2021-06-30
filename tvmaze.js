@@ -13,14 +13,30 @@ const $searchForm = $("#searchForm");
  */
 
 async function getShowsByTerm(term) {
-  // ADD: Remove placeholder & make request to TVMaze search shows API.
   let url = "http://api.tvmaze.com/search/shows"
-  return await axios.get(url, {params:{q:term}});
+  let showList = await axios.get(url, {params:{q:term}});
+
+  let prunedShows = [];
+  // loop over shows to only give us the id, name, summary, image in an object
+  // then put the object into an array which will be returned
+  for (let show of showList.data) {
+    let prunedShow = {};
+    prunedShow.id = show.show.id;
+    prunedShow.name = show.show.name;
+    prunedShow.summary = show.show.summary;
+    //if a show has no image, set as default image
+    prunedShow.image = show.show.image
+      ? show.show.image.medium
+      : "https://tinyurl.com/tv-missing";
+
+    console.log(prunedShow)
+    prunedShows.push(prunedShow);
+  }
+  return prunedShows;
 }
 
 
-/** Given list of shows, create markup for each and to DOM */
-
+/** Given list of shows, create markup for each show and add to DOM */
 function populateShows(shows) {
   $showsList.empty();
 
@@ -29,8 +45,8 @@ function populateShows(shows) {
         `<div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img 
-              src="http://static.tvmaze.com/uploads/images/medium_portrait/160/401704.jpg" 
-              alt="Bletchly Circle San Francisco" 
+              src="${show.image}" 
+              alt="${show.name}" 
               class="w-25 mr-3">
            <div class="media-body">
              <h5 class="text-primary">${show.name}</h5>

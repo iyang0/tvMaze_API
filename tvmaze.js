@@ -16,22 +16,24 @@ async function getShowsByTerm(term) {
   let url = "http://api.tvmaze.com/search/shows"
   let showList = await axios.get(url, {params:{q:term}});
 
-  let prunedShows = [];
   // loop over shows to only give us the id, name, summary, image in an object
   // then put the object into an array which will be returned
-  for (let show of showList.data) {
+
+  let prunedShows = showList.data.map(show =>{
     let prunedShow = {};
     prunedShow.id = show.show.id;
     prunedShow.name = show.show.name;
     prunedShow.summary = show.show.summary;
+
     //if a show has no image, set as default image
+    
     prunedShow.image = show.show.image
       ? show.show.image.medium
       : "https://tinyurl.com/tv-missing";
 
-    console.log(prunedShow)
-    prunedShows.push(prunedShow);
-  }
+    return prunedShow;
+  });
+
   return prunedShows;
 }
 
